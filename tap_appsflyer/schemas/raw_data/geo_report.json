@@ -1,0 +1,248 @@
+{
+  "type": "object",
+  "properties": {
+			"app_name": {
+					"type": ["null", "string"]
+			},
+			"app_os": {
+					"type": ["null", "string"]
+			},
+			"app_id": {
+					"type": ["null", "string"]
+			},
+			"date": {
+					"type": ["null", "date"]
+			},
+			"country": {
+					"type": ["null", "string"]
+			},
+			"agency_pmd__af_prt": {
+					"type": ["null", "string"]
+			},
+			"media_source__pid": {
+					"type": ["null", "string"]
+			},
+			"campaign__c": {
+					"type": ["null", "string"]
+			},
+			"impressions": {
+					"type": ["null", "integer"]
+			},
+			"clicks": {
+					"type": ["null", "integer"]
+			},
+			"ctr": {
+					"type": ["null", "string"]
+			},
+			"installs": {
+					"type": ["null", "integer"]
+			},
+			"conversion_rate": {
+					"type": ["null", "string"]
+			},
+			"sessions": {
+					"type": ["null", "integer"]
+			},
+			"loyal_users": {
+					"type": ["null", "integer"]
+			},
+			"loyal_users_installs": {
+					"type": ["null", "string"]
+			},
+			"total_revenue": {
+					"type": ["null", "string"]
+			},
+			"total_cost": {
+					"type": ["null", "string"]
+			},
+			"roi": {
+					"type": ["null", "string"]
+			},
+			"arpu": {
+					"type": ["null", "string"]
+			},
+			"average_ecpi": {
+					"type": ["null", "string"]
+			},
+			"allowpermission__unique_users": {
+					"type": ["null", "integer"]
+			},
+			"allowpermission__event_counter": {
+					"type": ["null", "integer"]
+			},
+			"allowpermission__sales_in_usd": {
+					"type": ["null", "string"]
+			},
+			"applyeffect__unique_users": {
+					"type": ["null", "integer"]
+			},
+			"applyeffect__event_counter": {
+					"type": ["null", "integer"]
+			},
+			"applyeffect__sales_in_usd": {
+					"type": ["null", "string"]
+			},
+			"applyfilter__unique_users": {
+					"type": ["null", "integer"]
+			},
+			"applyfilter__event_counter": {
+					"type": ["null", "integer"]
+			},
+			"applyfilter__sales_in_usd": {
+					"type": ["null", "string"]
+			},
+			"applytemplate__unique_users": {
+					"type": ["null", "integer"]
+			},
+			"applytemplate__event_counter": {
+					"type": ["null", "integer"]
+			},
+			"applytemplate__sales_in_usd": {
+					"type": ["null", "string"]
+			},
+			"cancelalert__unique_users": {
+					"type": ["null", "integer"]
+			},
+			"cancelalert__event_counter": {
+					"type": ["null", "integer"]
+			},
+			"cancelalert__sales_in_usd": {
+					"type": ["null", "string"]
+			},
+			"changeflashmode__unique_users": {
+					"type": ["null", "integer"]
+			},
+			"changeflashmode__event_counter": {
+					"type": ["null", "integer"]
+			},
+			"changeflashmode__sales_in_usd": {
+					"type": ["null", "string"]
+			},
+			"changemultiplecam__unique_users": {
+					"type": ["null", "integer"]
+			},
+			"changemultiplecam__event_counter": {
+					"type": ["null", "integer"]
+			},
+			"changemultiplecam__sales_in_usd": {
+					"type": ["null", "string"]
+			},
+			"changeorder__unique_users": {
+					"type": ["null", "integer"]
+			},
+			"changeorder__event_counter": {
+					"type": ["null", "integer"]
+			},
+			"changeorder__sales_in_usd": {
+					"type": ["null", "string"]
+			},
+			"changevolume__unique_users": {
+					"type": ["null", "integer"]
+			},
+			"changevolume__event_counter": {
+					"type": ["null", "integer"]
+			},
+			"changevolume__sales_in_usd": {
+					"type": ["null", "string"]
+			},
+			"delete__unique_users": {
+					"type": ["null", "integer"]
+			},
+			"delete__event_counter": {
+					"type": ["null", "integer"]
+			},
+			"delete__sales_in_usd": {
+					"type": ["null", "string"]
+			},
+			"deleteclip__unique_users": {
+					"type": ["null", "integer"]
+			},
+			"deleteclip__event_counter": {
+					"type": ["null", "integer"]
+			},
+			"deleteclip__sales_in_usd": {
+					"type": ["null", "string"]
+			},
+			"denypermission__unique_users": {
+					"type": ["null", "integer"]
+			},
+			"denypermission__event_counter": {
+					"type": ["null", "integer"]
+			},
+			"denypermission__sales_in_usd": {
+					"type": ["null", "string"]
+			},
+			"discardvideo__unique_users": {
+					"type": ["null", "integer"]
+			},
+			"discardvideo__event_counter": {
+					"type": ["null", "integer"]
+			},
+			"discardvideo__sales_in_usd": {
+					"type": ["null", "string"]
+			},
+			"gotalert__unique_users": {
+					"type": ["null", "integer"]
+			},
+			"gotalert__event_counter": {
+					"type": ["null", "integer"]
+			},
+			"gotalert__sales_in_usd": {
+					"type": ["null", "string"]
+			},
+			"gotosettings__unique_users": {
+					"type": ["null", "integer"]
+			},
+			"gotosettings__event_counter": {
+					"type": ["null", "integer"]
+			},
+			"gotosettings__sales_in_usd": {
+					"type": ["null", "string"]
+			},
+			"recordclip__unique_users": {
+					"type": ["null", "integer"]
+			},
+			"recordclip__event_counter": {
+					"type": ["null", "integer"]
+			},
+			"recordclip__sales_in_usd": {
+					"type": ["null", "string"]
+			},
+			"removehype__unique_users": {
+					"type": ["null", "integer"]
+			},
+			"removehype__event_counter": {
+					"type": ["null", "integer"]
+			},
+			"removehype__sales_in_usd": {
+					"type": ["null", "string"]
+			},
+			"selectmusic__unique_users": {
+					"type": ["null", "integer"]
+			},
+			"selectmusic__event_counter": {
+					"type": ["null", "integer"]
+			},
+			"selectmusic__sales_in_usd": {
+					"type": ["null", "string"]
+			},
+			"shareproject__unique_users": {
+					"type": ["null", "integer"]
+			},
+			"shareproject__event_counter": {
+					"type": ["null", "integer"]
+			},
+			"shareproject__sales_in_usd": {
+					"type": ["null", "string"]
+			},
+			"trimvideo__unique_users": {
+					"type": ["null", "integer"]
+			},
+			"trimvideo__event_counter": {
+					"type": ["null", "integer"]
+			},
+			"trimvideo__sales_in_usd": {
+					"type": ["null", "string"]
+			}
+	}
+}

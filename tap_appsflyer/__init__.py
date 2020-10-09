@@ -32,6 +32,7 @@ STATE = {}
 ENDPOINTS = {
     "installs": "/export/{app_id}/installs_report/v5",
     "in_app_events": "/export/{app_id}/in_app_events_report/v5"
+	"geo": "/export/{app_id}/geo_report/v5"
 }
 
 
@@ -421,9 +422,130 @@ def sync_in_app_events():
         to_datetime = get_stop(from_datetime, stop_time, 10)
 
 
+def sync_geo_report():
+    schema = load_schema("raw_data/geo")
+    singer.write_schema("geo_report", schema, [])
+    fieldnames = (
+        "app_name",
+		"app_os",
+		"app_id",
+		"date",
+		"country",
+		"agency_pmd__af_prt",
+		"media_source__pid",
+		"campaign__c",
+		"impressions",
+		"clicks",
+		"ctr",
+		"installs",
+		"conversion_rate",
+		"sessions",
+		"loyal_users",
+		"loyal_users_installs",
+		"total_revenue",
+		"total_cost",
+		"roi",
+		"arpu",
+		"average_ecpi",
+		"allowpermission__unique_users",
+		"allowpermission__event_counter",
+		"allowpermission__sales_in_usd",
+		"applyeffect__unique_users",
+		"applyeffect__event_counter",
+		"applyeffect__sales_in_usd",
+		"applyfilter__unique_users",
+		"applyfilter__event_counter",
+		"applyfilter__sales_in_usd",
+		"applytemplate__unique_users",
+		"applytemplate__event_counter",
+		"applytemplate__sales_in_usd",
+		"cancelalert__unique_users",
+		"cancelalert__event_counter",
+		"cancelalert__sales_in_usd",
+		"changeflashmode__unique_users",
+		"changeflashmode__event_counter",
+		"changeflashmode__sales_in_usd",
+		"changemultiplecam__unique_users",
+		"changemultiplecam__event_counter",
+		"changemultiplecam__sales_in_usd",
+		"changeorder__unique_users",
+		"changeorder__event_counter",
+		"changeorder__sales_in_usd",
+		"changevolume__unique_users",
+		"changevolume__event_counter",
+		"changevolume__sales_in_usd",
+		"delete__unique_users",
+		"delete__event_counter",
+		"delete__sales_in_usd",
+		"deleteclip__unique_users",
+		"deleteclip__event_counter",
+		"deleteclip__sales_in_usd",
+		"denypermission__unique_users",
+		"denypermission__event_counter",
+		"denypermission__sales_in_usd",
+		"discardvideo__unique_users",
+		"discardvideo__event_counter",
+		"discardvideo__sales_in_usd",
+		"gotalert__unique_users",
+		"gotalert__event_counter",
+		"gotalert__sales_in_usd",
+		"gotosettings__unique_users",
+		"gotosettings__event_counter",
+		"gotosettings__sales_in_usd",
+		"recordclip__unique_users",
+		"recordclip__event_counter",
+		"recordclip__sales_in_usd",
+		"removehype__unique_users",
+		"removehype__event_counter",
+		"removehype__sales_in_usd",
+		"selectmusic__unique_users",
+		"selectmusic__event_counter",
+		"selectmusic__sales_in_usd",
+		"shareproject__unique_users",
+		"shareproject__event_counter",
+		"shareproject__sales_in_usd",
+		"trimvideo__unique_users",
+		"trimvideo__event_counter",
+		"trimvideo__sales_in_usd"
+    )
+
+    from_datetime = get_start("geo_report")
+    to_datetime = get_stop(from_datetime, datetime.datetime.now())
+
+    if to_datetime < from_datetime:
+        LOGGER.error("to_datetime (%s) is less than from_endtime (%s).", to_datetime, from_datetime)
+        return
+
+    params = dict()
+    params["from"] = from_datetime.strftime("%Y-%m-%d %H:%M")
+    params["to"] = to_datetime.strftime("%Y-%m-%d %H:%M")
+    params["api_token"] = CONFIG["api_token"]
+
+    url = get_url("partners", app_id=CONFIG["app_id"])
+    request_data = request(url, params)
+
+    csv_data = RequestToCsvAdapter(request_data)
+    reader = csv.DictReader(csv_data, fieldnames)
+
+    next(reader)  # Skip the heading row
+
+    bookmark = from_datetime
+    for i, row in enumerate(reader):
+        record = xform(row, schema)
+        singer.write_record("parthners", record)
+        # AppsFlyer returns records in order of most recent first.
+        if utils.strptime(record["attributed_touch_time"]) > bookmark:
+            bookmark = utils.strptime(record["attributed_touch_time"])
+
+    # Write out state
+    utils.update_state(STATE, "parthners", bookmark)
+    singer.write_state(STATE)
+
+
 STREAMS = [
     Stream("installs", sync_installs),
     Stream("in_app_events", sync_in_app_events)
+	Stream("geo_report", sync_geo_report)
 ]
 
 
