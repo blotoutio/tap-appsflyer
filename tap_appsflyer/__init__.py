@@ -32,7 +32,7 @@ STATE = {}
 ENDPOINTS = {
     "installs": "/export/{app_id}/installs_report/v5",
     "in_app_events": "/export/{app_id}/in_app_events_report/v5",
-	"geo": "/export/{app_id}/geo_report/v5"
+	"geo_report": "/export/{app_id}/geo_report/v5"
 }
 
 
@@ -423,7 +423,7 @@ def sync_in_app_events():
 
 
 def sync_geo_report():
-    schema = load_schema("raw_data/geo")
+    schema = load_schema("raw_data/geo_report")
     singer.write_schema("geo_report", schema, [])
     fieldnames = (
         "app_name",
