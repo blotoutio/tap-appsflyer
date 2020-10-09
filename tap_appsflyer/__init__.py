@@ -31,7 +31,7 @@ STATE = {}
 
 ENDPOINTS = {
     "installs": "/export/{app_id}/installs_report/v5",
-    "in_app_events": "/export/{app_id}/in_app_events_report/v5"
+    "in_app_events": "/export/{app_id}/in_app_events_report/v5",
 	"geo": "/export/{app_id}/geo_report/v5"
 }
 
