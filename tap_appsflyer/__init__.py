@@ -32,7 +32,7 @@ STATE = {}
 ENDPOINTS = {
     "installs": "/export/{app_id}/installs_report/v5",
     "in_app_events": "/export/{app_id}/in_app_events_report/v5",
-	"geo_report": "/export/{app_id}/geo_report/v5"
+	"daily_report": "/export/{app_id}/daily_report/v5"
 }
 
 
@@ -47,10 +47,10 @@ def get_start(key):
     if "start_date" in CONFIG:
         return  utils.strptime(CONFIG["start_date"])
 
-    return datetime.datetime.now() - datetime.timedelta(days=30)
+    return datetime.datetime.now() - datetime.timedelta(days=60)
 
 
-def get_stop(start_datetime, stop_time, days=30):
+def get_stop(start_datetime, stop_time, days=60):
     return min(start_datetime + datetime.timedelta(days=days), stop_time)
 
 
@@ -89,10 +89,22 @@ def xform_empty_strings_to_none(record):
             record[key] = None
 
 
+def xform_na_strings_to_zero(record):
+    for key, value in record.items():
+        if value == "N/A":
+            record[key] = 0
+
+
 def xform(record, schema):
     xform_empty_strings_to_none(record)
     xform_boolean_field(record, "wifi")
     xform_boolean_field(record, "is_retargeting")
+    return transform.transform(record, schema)
+
+
+def xform_agg(record, schema):
+    xform_empty_strings_to_none(record)
+    xform_na_strings_to_zero(record)
     return transform.transform(record, schema)
 
 
@@ -422,63 +434,27 @@ def sync_in_app_events():
         to_datetime = get_stop(from_datetime, stop_time, 10)
 
 
-def sync_geo_report():
-    schema = load_schema("raw_data/geo_report")
-    singer.write_schema("geo_report", schema, [])
+def sync_daily_report():
+    schema = load_schema("raw_data/daily_report")
+    singer.write_schema("daily_report", schema, [])
     fieldnames = (
-		"country",
-		"agency_pmd__af_prt",
-		"media_source__pid",
-		"campaign__c",
-		"impressions",
-		"clicks",
-		"ctr",
-		"installs",
-		"conversion_rate",
-		"sessions",
-		"loyal_users",
-		"loyal_users_installs",
-		"total_revenue",
-		"total_cost",
-		"roi",
-		"arpu",
-		"average_ecpi",
-		"af_add_to_wishlist__unique_users",
-		"af_add_to_wishlist__event_counter",
-		"af_add_to_wishlist__sales_in_usd",
-		"af_complete_onboarding__unique_users",
-		"af_complete_onboarding__event_counter",
-		"af_complete_onboarding__sales_in_usd",
-		"af_finish_video__unique_users",
-		"af_finish_video__event_counter",
-		"af_finish_video__sales_in_usd",
-		"af_first_open__unique_users",
-		"af_first_open__event_counter",
-		"af_first_open__sales_in_usd",
-		"af_open_paywall__unique_users",
-		"af_open_paywall__event_counter",
-		"af_open_paywall__sales_in_usd",
-		"af_start_trial__unique_users",
-		"af_start_trial__event_counter",
-		"af_start_trial__sales_in_usd",
-		"af_subscribe__unique_users",
-		"af_subscribe__event_counter",
-		"af_subscribe__sales_in_usd",
-		"af_subscribe_month__unique_users",
-		"af_subscribe_month__event_counter",
-		"af_subscribe_month__sales_in_usd",
-		"af_subscribe_week__unique_users",
-		"af_subscribe_week__event_counter",
-		"af_subscribe_week__sales_in_usd",
-		"af_subscribe_year__unique_users",
-		"af_subscribe_year__event_counter",
-		"af_subscribe_year__sales_in_usd",
-		"af_try_pro__unique_users",
-		"af_try_pro__event_counter",
-		"af_try_pro__sales_in_usd"
+        "date",
+        "agency_pmd__af_prt",
+        "media_source__pid",
+        "campaign__c",
+        "impressions",
+        "clicks",
+        "ctr",
+        "installs",
+        "conversion_rate",
+        "sessions",
+        "loyal_users",
+        "loyal_users_installs",
+        "total_cost",
+        "average_ecpi"
     )
 
-    from_datetime = get_start("geo_report")
+    from_datetime = get_start("daily_report")
     to_datetime = get_stop(from_datetime, datetime.datetime.now())
 
     if to_datetime < from_datetime:
@@ -486,11 +462,12 @@ def sync_geo_report():
         return
 
     params = dict()
-    params["from"] = from_datetime.strftime("%Y-%m-%d %H:%M")
-    params["to"] = to_datetime.strftime("%Y-%m-%d %H:%M")
+    params["from"] = from_datetime.strftime("%Y-%m-%d")
+    params["to"] = to_datetime.strftime("%Y-%m-%d")
     params["api_token"] = CONFIG["api_token"]
+    params["timezone"] = "America/Sao_Paulo"
 
-    url = get_url("partners", app_id=CONFIG["app_id"])
+    url = get_url("daily_report", app_id=CONFIG["app_id"])
     request_data = request(url, params)
 
     csv_data = RequestToCsvAdapter(request_data)
@@ -500,21 +477,22 @@ def sync_geo_report():
 
     bookmark = from_datetime
     for i, row in enumerate(reader):
-        record = xform(row, schema)
-        singer.write_record("parthners", record)
+        row["app_id"] = CONFIG["app_id"]
+        record = xform_agg(row, schema)
+        singer.write_record("daily_report", record)
         # AppsFlyer returns records in order of most recent first.
-        if utils.strptime(record["attributed_touch_time"]) > bookmark:
-            bookmark = utils.strptime(record["attributed_touch_time"])
+        # if utils.strptime(record["attributed_touch_time"]) > bookmark:
 
+    bookmark = to_datetime
     # Write out state
-    utils.update_state(STATE, "parthners", bookmark)
+    utils.update_state(STATE, "daily_report", bookmark)
     singer.write_state(STATE)
 
 
 STREAMS = [
+    Stream("daily_report", sync_daily_report),
     Stream("installs", sync_installs),
     Stream("in_app_events", sync_in_app_events)
-	Stream("geo_report", sync_geo_report)
 ]
 
 
